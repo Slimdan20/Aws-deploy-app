@@ -21,6 +21,7 @@ jobs:
             - package-lock.json
             - index.html
             - src
+            - public
 
   build:
     executor: node-executor
