@@ -1,0 +1,61 @@
+version: 2.1
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:20.10
+
+jobs:
+  install_dependencies:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm install
+
+  build:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Build React App
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  deploy:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /workspace
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo pip3 install awscli
+      - run:
+          name: Install AWS EB CLI
+          command: |
+            sudo pip3 install awsebcli
+      - run:
+          name: Deploy to AWS Elastic Beanstalk
+          command: |
+            cd /workspace
+            eb init -p node.js test-app --region us-east-1
+            eb deploy
+
+workflows:
+  version: 2
+  deploy_react_app:
+    jobs:
+      - install_dependencies
+      - build:
+          requires:
+            - install_dependencies
+      - deploy:
+          requires:
+            - build
