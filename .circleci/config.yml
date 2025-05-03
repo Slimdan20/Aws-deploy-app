@@ -36,6 +36,7 @@ jobs:
           root: .
           paths:
             - dist  
+            - Procfile
 
   deploy:
     executor: node-executor
