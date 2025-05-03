@@ -22,7 +22,6 @@ jobs:
             - index.html
             - src
             - public
-            - Procfile
 
   build:
     executor: node-executor
