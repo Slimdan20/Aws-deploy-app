@@ -13,11 +13,19 @@ jobs:
       - run:
           name: Install Dependencies
           command: npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules  
+            - package.json
+            - package-lock.json
 
   build:
     executor: node-executor
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Build React App
           command: npm run build
