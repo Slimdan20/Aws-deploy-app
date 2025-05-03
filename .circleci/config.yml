@@ -55,9 +55,14 @@ jobs:
           name: Deploy to AWS Elastic Beanstalk
           command: |
             export PATH=$HOME/.local/bin:$PATH
-            eb init -p node.js test-app --region us-east-1 
-            eb use test-env
+            eb init test-app --platform node.js --region us-east-1
+            if eb list | grep -q "test-env"; then
+              eb use test-env
+            else
+              eb create test-env
+            fi
             eb deploy
+
 workflows:
   version: 2
   build_and_deploy:
